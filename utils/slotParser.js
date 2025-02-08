@@ -1,4 +1,4 @@
-import { convertTimeToTwelveHourFormat, isTimeBetween } from './helpers.js';
+import { convertTimeToTwelveHourFormat, isTimeBetween } from "./helpers.js";
 
 async function slotParser(slots) {
   const numberOfSlots = slots.length;
@@ -14,12 +14,21 @@ async function slotParser(slots) {
       break;
     }
   }
+  if (!slotId) {
+    console.log("No prime slots available");
+  }
   return slotId;
 }
 
 async function slotChooser(slot, time, type) {
-  if (isTimeBetween(process.env.EARLIEST, process.env.LATEST, slot.date.start)) {
-    console.log(`Booking a prime slot at ${time} ${type === 'Dining Room' ? 'in' : 'on'} the ${type}!`);
+  if (
+    isTimeBetween(process.env.EARLIEST, process.env.LATEST, slot.date.start)
+  ) {
+    console.log(
+      `Booking a prime slot at ${time} ${
+        type === "Dining Room" ? "in" : "on"
+      } the ${type}!`
+    );
     return slot.config.token;
   }
 }

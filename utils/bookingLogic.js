@@ -32,7 +32,7 @@ async function fetchDataAndParseSlots() {
     const response = await axios.request(slotConfig);
     if (response.data.results.venues.length === 0) {
       console.log(
-        "No slots available. Please run again after reservations open.",
+        "No slots available. Please run again after reservations open."
       );
       return false;
     }
@@ -41,7 +41,7 @@ async function fetchDataAndParseSlots() {
         response.data.results.venues[0].venue.name
       } on ${convertDateToLongFormat(process.env.DATE)} for ${
         process.env.PARTY_SIZE
-      } people...`,
+      } people...`
     );
     let slots = response.data.results.venues[0].slots;
     const slotId = await slotParser(slots);
@@ -67,7 +67,7 @@ async function makeBooking(book_token) {
   const formData = new FormData();
   formData.append(
     "struct_payment_method",
-    JSON.stringify({ id: process.env.PAYMENT_ID }),
+    JSON.stringify({ id: process.env.PAYMENT_ID })
   );
   formData.append("book_token", book_token);
   formData.append("source_id", "resy.com-venue-details");

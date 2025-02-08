@@ -3,9 +3,9 @@ import {
   getBookingConfig,
   makeBooking,
   fetchDataAndParseSlots,
-} from './utils/bookingLogic.js';
+} from "./utils/bookingLogic.js";
 
-import { checkTokenExpiration } from './utils/helpers.js';
+import { checkTokenExpiration } from "./utils/helpers.js";
 
 // Run the script
 let token = await checkTokenExpiration(process.env.AUTH_TOKEN);
