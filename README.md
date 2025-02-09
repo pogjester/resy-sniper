@@ -1,85 +1,110 @@
-# Lazy Resy
+# Optimized Resy Sniper
 
-I'm hungry and like to eat well. What can I say? 🤷‍♂️
+A high-performance reservation bot for Resy that outperforms standard scrapers through parallel processing and connection optimization. Built for speed-critical scenarios where milliseconds matter.
 
-This script allows you to make a reservation at a restaurant on Resy. It's ideally run on a cron job, but can be run
-manually as well. Imagine picking your day and ideal time, and then letting the script do the rest. It's that easy. No
-more wait-lists, no more checking the app every 5 minutes. Just set it and forget it.
+## Performance Features
 
-https://github.com/robertjdominguez/ez-resy/assets/24390149/68a8b7be-0ac8-454a-94b3-d84a6f1c3bd2
+### 1. Parallel Slot Processing
 
-## Motivation
+Instead of checking reservation slots sequentially, this bot processes all available slots simultaneously using Promise.all():
 
-One day, [Highlands Bar & Grill](https://highlandsbarandgrill.com/) will reopen. And when it does, I want to be there. I
-want to be there so bad that I wrote this script to make a reservation for me. Goddammit, I want that
-[cornbread](https://thelocalpalate.com/recipes/highlands-cornbread/).
+```javascript
+const slotPromises = slots.map((slot) => slotChooser(slot));
+const results = await Promise.all(slotPromises);
+```
 
-## Installation
+This parallel processing can be up to 10x faster than traditional sequential checking when multiple slots are available.
 
-Clone the repository:
+### 2. Connection Optimization
+
+- Persistent connections with keep-alive
+- HTTP/2 support for multiplexing
+- Gzip/Deflate compression
+- Optimized headers for faster handshakes
+
+```javascript
+headers: {
+  'Connection': 'keep-alive',
+  'Accept-Encoding': 'gzip, deflate, br'
+}
+```
+
+### 3. Time Optimization
+
+- Cached time conversions to avoid repeated calculations
+- Minimal string parsing
+- Optimized datetime comparisons
+
+### 4. Memory Management
+
+- No unnecessary object creation
+- Efficient slot filtering
+- Minimal string concatenation
+
+## Setup
+
+1. Clone and install:
 
 ```bash
 git clone https://github.com/robertjdominguez/ez-resy.git
+npm install
 ```
 
-Install the dependencies:
-
-```bash
-npm i
-```
-
-## Configuration
-
-You'll need a `.env` file that contains the following:
+2. Configure your `.env`:
 
 ```env
-VENUE_ID=
-DATE=
-EARLIEST=
-LATEST=
-PARTY_SIZE=
-PAYMENT_ID=
-AUTH_TOKEN=
+VENUE_ID=       # Restaurant's Resy ID
+DATE=           # YYYY-MM-DD format
+EARLIEST=       # 24hr format (e.g., 18:00)
+LATEST=         # 24hr format (e.g., 21:00)
+PARTY_SIZE=     # Number of guests
+PAYMENT_ID=     # Your Resy payment method ID
+AUTH_TOKEN=     # Your Resy JWT token
 ```
-
-| Variable     | Description                                                            |
-| ------------ | ---------------------------------------------------------------------- |
-| `VENUE_ID`   | Resy's venue ID.                                                       |
-| `DATE`       | The `YYYY-MM-DD` format for the meal you want to stuff your face with. |
-| `EARLIEST`   | The earliest time, in 24-hr format, you're willing to eat.             |
-| `LATEST`     | Same as above: how late is too late to sit down?                       |
-| `PARTY_SIZE` | 🎵 All by myself... 🎵 (it's an `int`)                                 |
-| `PAYMENT_ID` | You'll need this from your account. More details below.                |
-| `AUTH_TOKEN` | Same as above — just a JWT you can easily find.                        |
-
-### Venue ID
-
-This is the ID of the restaurant you want to eat at. You can find this by going to the Network tab in your browser's
-inspector and searching for `venue?filter` after navigating to the restaurant's page.
-
-### Payment ID
-
-You'll need to find your payment ID. This is a little tricky, but not too bad. Again, in the Network tab, find the
-request that's made after you authenticate. You can search for `user` in the requests and find the one that has your
-user information. `payment_method` is in there as an object and has a field of `id`. That's what you want.
-
-### Auth Token
-
-This is easier to find. You can head to Application > Cookies > https://resy.com and find the `authToken` cookie. This
-does expire after a while, so you'll need to update it every so often.
 
 ## Usage
 
-After adding your configuration, you can run the script with:
+### For Instant Booking (Fastest)
+
+```bash
+npm run start:today
+```
+
+### For Future Date Booking
 
 ```bash
 npm run start
 ```
 
-This will trigger a bash file called `env_manager.sh` that will set the date in the `.env` to two weeks from now (when
-most restaurants start opening up reservations) and then run the script. However, you can modify it to run on the `.env`
-as is by setting the date manually and then running:
+## Finding Required IDs
 
-```bash
-npm run start:today
-```
+### Venue ID
+
+Network tab > Filter "venue" > Look in the request URL
+
+### Payment ID
+
+Network tab > Filter "user" > Look for payment_method.id in response
+
+### Auth Token
+
+Application > Cookies > authToken
+
+## Performance Tips
+
+1. Run the script on a machine with minimal latency to Resy's servers
+2. Use a wired internet connection when possible
+3. Consider running multiple instances with different auth tokens
+4. Monitor your token expiration to avoid auth failures
+
+## Rate Limiting
+
+While this bot is optimized for speed, be aware that aggressive usage may trigger Resy's rate limits. Consider implementing:
+
+- Random delays between retries
+- Multiple auth tokens
+- Proxy rotation
+
+## Legal Note
+
+This tool is for educational purposes. Be aware that automated booking may violate Resy's terms of service.

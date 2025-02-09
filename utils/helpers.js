@@ -1,5 +1,8 @@
 import jwt from 'jsonwebtoken';
 
+// Cache for converted times
+const timeCache = new Map();
+
 function convertTimeToTwelveHourFormat(time) {
   const timeString = time.split(' ')[1];
   const [hour, minutes] = timeString.split(':');
@@ -16,15 +19,19 @@ function convertDateToLongFormat(date) {
   return dateObject.toLocaleDateString('en-US', options);
 }
 
+function convertToMinutes(timeStr) {
+  if (timeCache.has(timeStr)) {
+    return timeCache.get(timeStr);
+  }
+  const [hours, minutes] = timeStr.split(':').map(Number);
+  const result = hours * 60 + minutes;
+  timeCache.set(timeStr, result);
+  return result;
+}
+
 function isTimeBetween(startTime, endTime, dateString) {
   let targetTime = dateString.split(' ')[1];
-
-  // Convert times to minutes since midnight
-  const convertToMinutes = (timeStr) => {
-    const [hours, minutes] = timeStr.split(':').map(Number);
-    return hours * 60 + minutes;
-  };
-
+  
   const startMinutes = convertToMinutes(startTime);
   const endMinutes = convertToMinutes(endTime);
   const targetMinutes = convertToMinutes(targetTime);
