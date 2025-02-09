@@ -105,6 +105,22 @@ While this bot is optimized for speed, be aware that aggressive usage may trigge
 - Multiple auth tokens
 - Proxy rotation
 
+##A Note on Cron Tabs
+
+Cron tabs are a way to run a script at a specific time. You can set it up by running the following command in your terminal:
+
+```bash
+crontab -e
+```
+
+This will open the crontab editor. You can then add the following line to run the script at a specific time (in this case, 9:00 AM every day):
+
+```bash
+PATH=/Users/yourname/.nvm/versions/node/v22.9.0/bin:/usr/local/bin:/user/bin:/bin
+
+0 9 * * * cd /path_to_your_code && npm run start:today > log.txt 2>&1
+```
+
 ## Legal Note
 
 This tool is for educational purposes. Be aware that automated booking may violate Resy's terms of service.
